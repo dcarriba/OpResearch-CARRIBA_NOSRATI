@@ -5,7 +5,6 @@ package com.dcarriba.main;
  */
 public class Main {
 
-
     /**
      * Main function of the project
      *
