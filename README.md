@@ -48,7 +48,7 @@ To build the project, use the following command:
 To run the project, use the following command:
 
 ```bash
-./gradlew run
+./gradlew run --args="path/to/input.txt"
 ```
 
 ### Run unit tests
