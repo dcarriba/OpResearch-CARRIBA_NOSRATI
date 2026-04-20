@@ -51,6 +51,8 @@ To run the project, use the following command:
 ./gradlew run --args="path/to/input.txt"
 ```
 
+With `path/to/input.txt` the input file containing the graphs data.
+
 ### Run unit tests
 
 To run the unit tests of the project, use the following command
