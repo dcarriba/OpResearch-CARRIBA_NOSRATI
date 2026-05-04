@@ -25,4 +25,22 @@ public class Vertex {
     public void setLabel(String label) {
         this.label = label;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (!(object instanceof Vertex vertex)) {
+            return false;
+        }
+
+        return id == vertex.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
 }

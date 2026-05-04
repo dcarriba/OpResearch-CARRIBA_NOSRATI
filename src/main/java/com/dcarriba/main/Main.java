@@ -1,8 +1,10 @@
 package com.dcarriba.main;
 
+import com.dcarriba.model.algorithm.FordFulkerson;
 import com.dcarriba.model.graph.Graph;
 import com.dcarriba.model.graph.GraphInputParser;
 import com.dcarriba.model.graph.GraphDotSerializer;
+import com.dcarriba.model.graph.Result;
 import com.dcarriba.model.utilities.Utilities;
 
 import java.io.IOException;
@@ -30,18 +32,26 @@ public class Main {
 
         try {
             String input = Files.readString(inputPath, StandardCharsets.UTF_8);
+
             Graph graph = new GraphInputParser().parse(input);
-            Path outputPath = Path.of("graph.dot");
-            new GraphDotSerializer().writeToFile(graph, outputPath);
-            Path pdfOutputPath = Utilities.generatePdfFromDot(outputPath);
+            Path graphOutputPath = Path.of("graph.dot");
+            new GraphDotSerializer().writeToFile(graph, graphOutputPath);
+            Path graphPdfOutputPath = Utilities.generatePdfFromDot(graphOutputPath);
+
+            Result result = new FordFulkerson().solve(graph);
+            Path resultOutputPath = Path.of("result.dot");
+            new GraphDotSerializer().writeToFile(result, resultOutputPath);
+            Path resultPdfOutputPath = Utilities.generatePdfFromDot(resultOutputPath);
 
             System.out.println("Graph successfully loaded from: " + inputPath);
             System.out.println("Vertices: " + graph.getNumberOfVertices());
             System.out.println("Arcs: " + graph.getNumberOfArcs());
             System.out.println("Source: " + graph.getSource().getId());
             System.out.println("Sink: " + graph.getSink().getId());
-            System.out.println("DOT file generated at: " + outputPath);
-            System.out.println("PDF file generated at: " + pdfOutputPath);
+            System.out.println("DOT file of graph generated at: " + graphOutputPath);
+            System.out.println("PDF file of graph generated at: " + graphPdfOutputPath);
+            System.out.println("DOT file of result generated at: " + resultOutputPath);
+            System.out.println("PDF file of result generated at: " + resultPdfOutputPath);
         } catch (IOException e) {
             System.err.println("I/O error while processing graph files.");
             System.err.println(e.getMessage());

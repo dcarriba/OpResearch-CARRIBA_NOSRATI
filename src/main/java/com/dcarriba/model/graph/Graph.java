@@ -49,35 +49,13 @@ public class Graph {
         return sink;
     }
 
-    public Vertex addNewSource() {
-        Vertex source = new Vertex(-1);
-        vertices.add(source);
-        this.source = source;
+    public Vertex changeSourceTo(int vertexId) {
+        this.source = getVertex(vertexId);
         return this.source;
     }
 
-    public Vertex changeSourceTo(int vertexId) {
-        try {
-            this.source = getVertex(vertexId);
-            return this.source;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    public Vertex addNewSink() {
-        Vertex sink = new Vertex(-2);
-        vertices.add(sink);
-        this.sink = sink;
-        return this.sink;
-    }
-
     public Vertex changeSinkTo(int vertexId) {
-        try {
-            this.sink = getVertex(vertexId);
-            return this.sink;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e);
-        }
+        this.sink = getVertex(vertexId);
+        return this.sink;
     }
 }

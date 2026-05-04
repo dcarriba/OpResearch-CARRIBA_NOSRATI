@@ -1,5 +1,6 @@
 package com.dcarriba.model.graph;
 
+import com.dcarriba.model.algorithm.FordFulkerson;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -77,6 +78,67 @@ class GraphDotSerializerTest {
 
         String generated = Files.readString(output, StandardCharsets.UTF_8);
         String expected = serializer.serialize(graph);
+
+        assertEquals(expected, generated);
+    }
+
+    @Test
+    void shouldSerializeResultToDotFormat() {
+        String input = """
+                4 5 0 3
+                0 1 3 0
+                0 2 2 0
+                1 2 1 0
+                1 3 2 0
+                2 3 4 0
+                """;
+
+        Graph graph = new GraphInputParser().parse(input);
+        Result result = new FordFulkerson().solve(graph);
+
+        String dot = new GraphDotSerializer().serialize(result);
+
+        String expected = """
+                digraph Gv2Result{
+                    graph [nodesep="0.3", ranksep="0.3",fontsize=12]
+                    node [shape=circle,fixedsize=true,width=.3,height=.3,fontsize=12]
+                    edge [arrowsize=0.6]
+                    label="maximum flow = 5, minimum cut = 5"
+                    labelloc=t
+
+                    0 -> 1 [label = <<font color="blue">3</font>/<font color="green">3</font>>,color=blue,penwidth=2.0]
+                    0 -> 2 [label = <<font color="blue">2</font>/<font color="green">2</font>>,color=blue,penwidth=2.0]
+                    1 -> 2 [label = <<font color="blue">1</font>/<font color="green">1</font>>]
+                    1 -> 3 [label = <<font color="blue">2</font>/<font color="green">2</font>>]
+                    2 -> 3 [label = <<font color="blue">3</font>/<font color="green">4</font>>]
+                    3 -> 0 [color=red]
+
+                    0 [label="0",color=green]
+                    1 [label="1",style=filled,fillcolor=lightblue]
+                    2 [label="2",style=filled,fillcolor=lightblue]
+                    3 [label="3",color=blue]
+                }
+                """;
+
+        assertEquals(expected, dot);
+    }
+
+    @Test
+    void shouldWriteResultDotFile() throws IOException {
+        String input = """
+                2 1 0 1
+                0 1 3 0
+                """;
+
+        Graph graph = new GraphInputParser().parse(input);
+        Result result = new FordFulkerson().solve(graph);
+        GraphDotSerializer serializer = new GraphDotSerializer();
+
+        Path output = Files.createTempFile("result-", ".dot");
+        serializer.writeToFile(result, output);
+
+        String generated = Files.readString(output, StandardCharsets.UTF_8);
+        String expected = serializer.serialize(result);
 
         assertEquals(expected, generated);
     }
