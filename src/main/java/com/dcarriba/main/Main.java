@@ -3,6 +3,7 @@ package com.dcarriba.main;
 import com.dcarriba.model.graph.Graph;
 import com.dcarriba.model.graph.GraphInputParser;
 import com.dcarriba.model.graph.GraphDotSerializer;
+import com.dcarriba.model.utilities.Utilities;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -32,7 +33,7 @@ public class Main {
             Graph graph = new GraphInputParser().parse(input);
             Path outputPath = Path.of("graph.dot");
             new GraphDotSerializer().writeToFile(graph, outputPath);
-            Path pdfOutputPath = generatePdfFromDot(outputPath);
+            Path pdfOutputPath = Utilities.generatePdfFromDot(outputPath);
 
             System.out.println("Graph successfully loaded from: " + inputPath);
             System.out.println("Vertices: " + graph.getNumberOfVertices());
@@ -55,35 +56,5 @@ public class Main {
             System.err.println(e.getMessage());
             System.exit(1);
         }
-    }
-
-    private static Path generatePdfFromDot(Path dotPath) throws IOException, InterruptedException {
-        Path parent = dotPath.getParent();
-        String fileName = dotPath.getFileName().toString();
-        String pdfFileName = fileName + ".pdf";
-        Path pdfPath;
-        if (parent == null) {
-            pdfPath = Path.of(pdfFileName);
-        } else {
-            pdfPath = parent.resolve(pdfFileName);
-        }
-
-        Process process = new ProcessBuilder("dot", "-Tpdf", dotPath.toString(), "-o", pdfPath.toString())
-                .redirectErrorStream(true)
-                .start();
-
-        String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
-        int exitCode = process.waitFor();
-        if (exitCode != 0) {
-            String errorMessage;
-            if (output.isEmpty()) {
-                errorMessage = "Graphviz 'dot' command failed with exit code " + exitCode + ".";
-            } else {
-                errorMessage = output;
-            }
-            throw new IOException(errorMessage);
-        }
-
-        return pdfPath;
     }
 }
