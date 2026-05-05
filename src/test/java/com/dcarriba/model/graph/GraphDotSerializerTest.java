@@ -64,7 +64,7 @@ class GraphDotSerializerTest {
     }
 
     @Test
-    void shouldWriteDotFile() throws IOException {
+    void shouldWriteGraphDotFile() throws IOException {
         String input = """
                 2 1 0 1
                 0 1 3 7

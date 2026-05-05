@@ -99,7 +99,10 @@ public class GraphDotSerializer {
         dot.append("    labelloc=t\n");
         dot.append("\n");
 
-        for (Arc arc : sortedArcs(result.getFlows().keySet())) {
+        Vertex source = result.getSource();
+        Vertex sink = result.getSink();
+
+        for (Arc arc : sortedArcs(result.getFlows().keySet(), source, sink)) {
             String from = toDotNodeId(arc.getFrom());
             String to = toDotNodeId(arc.getTo());
 
@@ -127,16 +130,13 @@ public class GraphDotSerializer {
             .append(" [color=red]\n");
         dot.append("\n");
 
-        Vertex source = result.getSource();
-        Vertex sink = result.getSink();
-
         dot.append("    ")
             .append(toDotNodeId(source))
             .append(" [label=\"")
             .append(escapeForDot(source.getLabel()))
             .append("\",color=green]\n");
 
-        List<Vertex> middleVertices = sortedVertices(resultVertices(result)).stream()
+        List<Vertex> middleVertices = sortedVertices(resultVertices(result), source, sink).stream()
             .filter(vertex -> vertex.getId() != source.getId() && vertex.getId() != sink.getId())
             .toList();
 
@@ -171,9 +171,11 @@ public class GraphDotSerializer {
         Files.writeString(outputPath, serialize(result), StandardCharsets.UTF_8);
     }
 
-    private List<Arc> sortedArcs(Set<Arc> arcs) {
+    private List<Arc> sortedArcs(Set<Arc> arcs, Vertex source, Vertex sink) {
         return arcs.stream()
-            .sorted(Comparator.comparingInt((Arc arc) -> arc.getFrom().getId())
+            .sorted(Comparator.comparingInt((Arc arc) -> resultVertexRank(arc.getFrom(), source, sink))
+                .thenComparingInt(arc -> arc.getFrom().getId())
+                .thenComparingInt(arc -> resultVertexRank(arc.getTo(), source, sink))
                 .thenComparingInt(arc -> arc.getTo().getId())
                 .thenComparingInt(Arc::getMaximumCapacity)
                 .thenComparingInt(Arc::getCost))
@@ -187,10 +189,23 @@ public class GraphDotSerializer {
         return vertices;
     }
 
-    private List<Vertex> sortedVertices(Set<Vertex> vertices) {
+    private List<Vertex> sortedVertices(Set<Vertex> vertices, Vertex source, Vertex sink) {
         return vertices.stream()
-            .sorted(Comparator.comparingInt(Vertex::getId))
+            .sorted(Comparator.comparingInt((Vertex vertex) -> resultVertexRank(vertex, source, sink))
+                .thenComparingInt(Vertex::getId))
             .toList();
+    }
+
+    private int resultVertexRank(Vertex vertex, Vertex source, Vertex sink) {
+        if (vertex.getId() == source.getId()) {
+            return -1;
+        }
+
+        if (vertex.getId() == sink.getId()) {
+            return 1;
+        }
+
+        return 0;
     }
 
     private String toDotNodeId(Vertex vertex) {
