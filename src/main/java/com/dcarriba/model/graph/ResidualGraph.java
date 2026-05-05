@@ -42,8 +42,7 @@ public class ResidualGraph {
     }
 
     /*
-     * Ford-Fulkerson is the general augmenting-path framework. This method uses
-     * BFS to choose each path, which is the Edmonds-Karp path-selection variant.
+     * This method uses BFS to choose each path, which is the Edmonds-Karp path-selection variant.
      */
     public List<ResidualArc> findAugmentingPath(Vertex source, Vertex sink) {
         Queue<Vertex> queue = new ArrayDeque<>();
