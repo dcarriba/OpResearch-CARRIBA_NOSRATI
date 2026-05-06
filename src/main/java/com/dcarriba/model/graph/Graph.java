@@ -1,8 +1,10 @@
 package com.dcarriba.model.graph;
 
+import com.dcarriba.model.graph.dot.DotSerializable;
+
 import java.util.Set;
 
-public class Graph {
+public class Graph implements DotSerializable {
     private final Set<Arc> arcs;
     private final Set<Vertex> vertices;
     private Vertex source;

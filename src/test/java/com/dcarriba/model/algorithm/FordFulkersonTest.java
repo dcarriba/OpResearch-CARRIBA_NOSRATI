@@ -2,8 +2,8 @@ package com.dcarriba.model.algorithm;
 
 import com.dcarriba.model.graph.Arc;
 import com.dcarriba.model.graph.Graph;
-import com.dcarriba.model.graph.GraphInputParser;
-import com.dcarriba.model.graph.Result;
+import com.dcarriba.model.graph.input.GraphInputParser;
+import com.dcarriba.model.graph.MaxFlowMinCut;
 import com.dcarriba.model.graph.Vertex;
 import org.junit.jupiter.api.Test;
 
@@ -32,13 +32,13 @@ class FordFulkersonTest {
                 """;
         Graph graph = new GraphInputParser().parse(input);
 
-        Result result = new FordFulkerson().solve(graph);
+        MaxFlowMinCut maxFlowMinCut = new FordFulkerson().solve(graph);
 
-        assertEquals(23, result.getMaximumFlow());
-        assertEquals(23, result.getMinimumCutCapacity());
-        assertVertexIds(Set.of(0, 1, 2, 4), result.getMinimumCutSourceSide());
-        assertVertexIds(Set.of(3, 5), result.getMinimumCutSinkSide());
-        assertArcIds(Set.of("1->3", "4->3", "4->5"), result.getMinimumCutArcs());
+        assertEquals(23, maxFlowMinCut.getMaximumFlow());
+        assertEquals(23, maxFlowMinCut.getMinimumCutCapacity());
+        assertVertexIds(Set.of(0, 1, 2, 4), maxFlowMinCut.getMinimumCutSourceSide());
+        assertVertexIds(Set.of(3, 5), maxFlowMinCut.getMinimumCutSinkSide());
+        assertArcIds(Set.of("1->3", "4->3", "4->5"), maxFlowMinCut.getMinimumCutArcs());
     }
 
     @Test
@@ -54,11 +54,11 @@ class FordFulkersonTest {
         Map<String, Integer> capacitiesBefore = graph.getArcs().stream()
             .collect(Collectors.toMap(this::arcKeyWithCapacity, Arc::getMaximumCapacity, (left, right) -> left));
 
-        Result result = new FordFulkerson().solve(graph);
+        MaxFlowMinCut maxFlowMinCut = new FordFulkerson().solve(graph);
 
-        assertEquals(10, result.getMaximumFlow());
-        assertEquals(10, result.getMinimumCutCapacity());
-        assertArcIds(Set.of("1->2"), result.getMinimumCutArcs());
+        assertEquals(10, maxFlowMinCut.getMaximumFlow());
+        assertEquals(10, maxFlowMinCut.getMinimumCutCapacity());
+        assertArcIds(Set.of("1->2"), maxFlowMinCut.getMinimumCutArcs());
         assertEquals(4, graph.getNumberOfArcs());
         assertEquals(capacitiesBefore, graph.getArcs().stream()
             .collect(Collectors.toMap(this::arcKeyWithCapacity, Arc::getMaximumCapacity, (left, right) -> left)));
@@ -77,10 +77,10 @@ class FordFulkersonTest {
         );
         Graph graph = new Graph(arcs, vertices, source, sink);
 
-        Result result = new FordFulkerson().solve(graph);
+        MaxFlowMinCut maxFlowMinCut = new FordFulkerson().solve(graph);
 
-        assertEquals(3, result.getMaximumFlow());
-        assertEquals(3, result.getMinimumCutCapacity());
+        assertEquals(3, maxFlowMinCut.getMaximumFlow());
+        assertEquals(3, maxFlowMinCut.getMinimumCutCapacity());
     }
 
     private void assertVertexIds(Set<Integer> expectedIds, Set<com.dcarriba.model.graph.Vertex> vertices) {

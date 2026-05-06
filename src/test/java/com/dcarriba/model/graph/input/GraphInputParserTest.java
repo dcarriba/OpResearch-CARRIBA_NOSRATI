@@ -1,5 +1,6 @@
-package com.dcarriba.model.graph;
+package com.dcarriba.model.graph.input;
 
+import com.dcarriba.model.graph.Graph;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

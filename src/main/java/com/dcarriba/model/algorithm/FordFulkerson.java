@@ -4,7 +4,7 @@ import com.dcarriba.model.graph.Arc;
 import com.dcarriba.model.graph.Graph;
 import com.dcarriba.model.graph.ResidualArc;
 import com.dcarriba.model.graph.ResidualGraph;
-import com.dcarriba.model.graph.Result;
+import com.dcarriba.model.graph.MaxFlowMinCut;
 import com.dcarriba.model.graph.Vertex;
 
 import java.util.IdentityHashMap;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class FordFulkerson {
 
-    public Result solve(Graph graph) {
+    public MaxFlowMinCut solve(Graph graph) {
         Objects.requireNonNull(graph, "graph must not be null");
 
         Vertex source = Objects.requireNonNull(graph.getSource(), "graph source must not be null");
@@ -70,6 +70,6 @@ public class FordFulkerson {
             }
         }
 
-        return new Result(source, sink, maximumFlow, cutCapacity, sourceSide, sinkSide, cutArcs, flows);
+        return new MaxFlowMinCut(source, sink, maximumFlow, cutCapacity, sourceSide, sinkSide, cutArcs, flows);
     }
 }

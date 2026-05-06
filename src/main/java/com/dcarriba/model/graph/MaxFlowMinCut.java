@@ -1,10 +1,12 @@
 package com.dcarriba.model.graph;
 
+import com.dcarriba.model.graph.dot.DotSerializable;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class Result {
+public class MaxFlowMinCut implements DotSerializable {
     private final Vertex source;
     private final Vertex sink;
     private final long maximumFlow;
@@ -14,7 +16,7 @@ public class Result {
     private final Set<Arc> minimumCutArcs;
     private final Map<Arc, Long> flows;
 
-    public Result(
+    public MaxFlowMinCut(
         Vertex source,
         Vertex sink,
         long maximumFlow,

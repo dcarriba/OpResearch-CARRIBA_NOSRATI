@@ -1,10 +1,10 @@
 package com.dcarriba.main;
 
 import com.dcarriba.model.algorithm.FordFulkerson;
-import com.dcarriba.model.graph.Graph;
-import com.dcarriba.model.graph.GraphInputParser;
-import com.dcarriba.model.graph.GraphDotSerializer;
-import com.dcarriba.model.graph.Result;
+import com.dcarriba.model.graph.*;
+import com.dcarriba.model.graph.dot.GraphDotSerializer;
+import com.dcarriba.model.graph.dot.MaxFlowMinCutDotSerializer;
+import com.dcarriba.model.graph.input.GraphInputParser;
 import com.dcarriba.model.utilities.Utilities;
 
 import java.io.IOException;
@@ -38,10 +38,10 @@ public class Main {
             new GraphDotSerializer().writeToFile(graph, graphOutputPath);
             Path graphPdfOutputPath = Utilities.generatePdfFromDot(graphOutputPath);
 
-            Result result = new FordFulkerson().solve(graph);
-            Path resultOutputPath = Path.of("result.dot");
-            new GraphDotSerializer().writeToFile(result, resultOutputPath);
-            Path resultPdfOutputPath = Utilities.generatePdfFromDot(resultOutputPath);
+            MaxFlowMinCut maxFlowMinCut = new FordFulkerson().solve(graph);
+            Path maxFlowMinCutOutputPath = Path.of("maxFlowMinCut.dot");
+            new MaxFlowMinCutDotSerializer().writeToFile(maxFlowMinCut, maxFlowMinCutOutputPath);
+            Path maxFlowMinCutPdfOutputPath = Utilities.generatePdfFromDot(maxFlowMinCutOutputPath);
 
             System.out.println("Graph successfully loaded from: " + inputPath);
             System.out.println("Vertices: " + graph.getNumberOfVertices());
@@ -50,8 +50,8 @@ public class Main {
             System.out.println("Sink: " + graph.getSink().getId());
             System.out.println("DOT file of graph generated at: " + graphOutputPath);
             System.out.println("PDF file of graph generated at: " + graphPdfOutputPath);
-            System.out.println("DOT file of result generated at: " + resultOutputPath);
-            System.out.println("PDF file of result generated at: " + resultPdfOutputPath);
+            System.out.println("DOT file of maxFlowMinCut generated at: " + maxFlowMinCutOutputPath);
+            System.out.println("PDF file of maxFlowMinCut generated at: " + maxFlowMinCutPdfOutputPath);
         } catch (IOException e) {
             System.err.println("I/O error while processing graph files.");
             System.err.println(e.getMessage());

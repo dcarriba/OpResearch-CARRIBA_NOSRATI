@@ -1,4 +1,8 @@
-package com.dcarriba.model.graph;
+package com.dcarriba.model.graph.input;
+
+import com.dcarriba.model.graph.Arc;
+import com.dcarriba.model.graph.Graph;
+import com.dcarriba.model.graph.Vertex;
 
 import java.io.StringReader;
 import java.util.LinkedHashSet;
