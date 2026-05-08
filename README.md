@@ -10,10 +10,12 @@ Daniel Carriba Nosrati
 
 ## Requirements
 
-- Java is required <br>
-  Java version 21 is highly recommended, as the project was build and tested with Java 21
+- Java is required. <br>
+  Java version 21 is highly recommended, as the project was build and tested with Java 21.
 
-- Gradle Wrapper is included, no separate Gradle installation is required.
+- The `dot` command from Graphviz is required. Download Graphviz [here](https://graphviz.org/download/).
+
+- The Gradle Wrapper is included, no separate Gradle installation is required.
 
 ## Clone the repository
 
