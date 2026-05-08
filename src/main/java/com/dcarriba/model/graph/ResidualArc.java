@@ -36,6 +36,14 @@ public class ResidualArc {
         return originalArc;
     }
 
+    public int getCost() {
+        if (originalArc == null) {
+            return 0;
+        }
+
+        return forward ? originalArc.getCost() : -originalArc.getCost();
+    }
+
     public boolean isForward() {
         return forward;
     }

@@ -29,4 +29,16 @@ class GraphInputParserTest {
         assertEquals(6, graph.getNumberOfVertices());
         assertEquals(10, graph.getNumberOfArcs());
     }
+
+    @Test
+    void shouldParseNegativeArcCosts() {
+        String input = """
+                2 1 0 1
+                0 1 5 -7
+                """;
+
+        Graph graph = new GraphInputParser().parse(input);
+
+        assertEquals(-7, graph.getArcs().iterator().next().getCost());
+    }
 }

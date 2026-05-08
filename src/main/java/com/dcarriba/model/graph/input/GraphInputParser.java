@@ -47,10 +47,6 @@ public class GraphInputParser {
                 throw new IllegalArgumentException("Arc " + i + " capacity must be >= 0.");
             }
 
-            if (cost < 0) {
-                throw new IllegalArgumentException("Arc " + i + " cost must be >= 0.");
-            }
-
             arcs.add(new Arc(from, to, maximumCapacity, cost));
         }
 
