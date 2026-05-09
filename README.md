@@ -47,17 +47,17 @@ To build the project, use the following command:
 
 ### Run the project
 
-To run the project, use the following command:
+To compute the maximum flow and minimum cut, the minimum cost flow as well as to detect if a negative cost cycle exists, use the following command:
 
 ```bash
-./gradlew run --args="path/to/input/file-name.txt"
+./gradlew run --args="path/to/input/graph-file-name.txt"
 ```
 
-With `path/to/input/file-name.txt` the input file containing the graphs data.
+With `path/to/input/graph-file-name.txt` the input file containing the graphs data.
 
-The results will be created in the `output/file-name/` directory.
+The results will be created in the `output/graph-file-name/` directory.
 
-Examples: 
+Tested examples: 
 
 ```bash
 ./gradlew run --args="input/graph_data.txt"
@@ -86,6 +86,8 @@ Examples:
 ```bash
 ./gradlew run --args="input/problem3-2_graph_data.txt"
 ```
+
+More information about the input and output format can be found in the Section 4 of the report `report/Rapport-OpResearch-CARRIBA_NOSRATI.pdf`
 
 ### Run unit tests
 
