@@ -2,7 +2,7 @@
 
 Project for the Operations Research course at Université Côte d'Azur.
 
-General information about the project, its goal and how it works, can be found in `report/Rapport.pdf`.
+General information about the project, its goal and how it works, can be found in `report/Rapport-OpResearch-CARRIBA_NOSRATI.pdf`.
 
 ## Author
 
@@ -50,10 +50,42 @@ To build the project, use the following command:
 To run the project, use the following command:
 
 ```bash
-./gradlew run --args="path/to/input.txt"
+./gradlew run --args="path/to/input/file-name.txt"
 ```
 
-With `path/to/input.txt` the input file containing the graphs data.
+With `path/to/input/file-name.txt` the input file containing the graphs data.
+
+The results will be created in the `output/file-name/` directory.
+
+Examples: 
+
+```bash
+./gradlew run --args="input/graph_data.txt"
+```
+
+```bash
+./gradlew run --args="input/problem1_graph_data.txt"
+```
+
+```bash
+./gradlew run --args="input/problem2-1_graph_data.txt"
+```
+
+```bash
+./gradlew run --args="input/problem2-2_graph_data.txt"
+```
+
+```bash
+./gradlew run --args="input/problem2-3_graph_data.txt"
+```
+
+```bash
+./gradlew run --args="input/problem3-1_graph_data.txt"
+```
+
+```bash
+./gradlew run --args="input/problem3-2_graph_data.txt"
+```
 
 ### Run unit tests
 

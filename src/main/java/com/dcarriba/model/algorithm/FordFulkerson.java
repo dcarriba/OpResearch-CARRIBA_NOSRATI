@@ -17,7 +17,12 @@ import java.util.Set;
 public class FordFulkerson {
 
     public MaxFlowMinCut solve(Graph graph) {
+        return solve(graph, ResidualGraphObserver.NONE);
+    }
+
+    public MaxFlowMinCut solve(Graph graph, ResidualGraphObserver residualGraphObserver) {
         Objects.requireNonNull(graph, "graph must not be null");
+        Objects.requireNonNull(residualGraphObserver, "residualGraphObserver must not be null");
 
         Vertex source = Objects.requireNonNull(graph.getSource(), "graph source must not be null");
         Vertex sink = Objects.requireNonNull(graph.getSink(), "graph sink must not be null");
@@ -33,6 +38,9 @@ public class FordFulkerson {
         }
 
         long maximumFlow = 0;
+        int step = 0;
+        residualGraphObserver.onResidualGraphStep("maxFlowMinCut", step, residualGraph);
+
         List<ResidualArc> augmentingPath = residualGraph.findAugmentingPath(source, sink);
 
         while (!augmentingPath.isEmpty()) {
@@ -54,6 +62,9 @@ public class FordFulkerson {
             }
 
             maximumFlow += bottleneck;
+            step++;
+            residualGraphObserver.onResidualGraphStep("maxFlowMinCut", step, residualGraph);
+
             augmentingPath = residualGraph.findAugmentingPath(source, sink);
         }
 

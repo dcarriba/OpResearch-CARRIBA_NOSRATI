@@ -1,0 +1,24 @@
+digraph Gv2MinimumCostFlow{
+    graph [nodesep="0.3", ranksep="0.3",fontsize=12]
+    node [shape=circle,fixedsize=true,width=.3,height=.3,fontsize=12]
+    edge [arrowsize=0.6]
+    label="flow = 60, minimum cost = 0"
+    labelloc=t
+
+    0 -> 1 [label = <<font color="blue">20</font>/<font color="green">20</font>,<font color="red">0</font>>,color=blue,penwidth=1.0]
+    0 -> 2 [label = <<font color="blue">30</font>/<font color="green">30</font>,<font color="red">0</font>>,color=blue,penwidth=1.0]
+    0 -> 3 [label = <<font color="blue">10</font>/<font color="green">10</font>,<font color="red">0</font>>,color=blue,penwidth=1.0]
+    1 -> 2 [label = <<font color="blue">0</font>/<font color="green">40</font>,<font color="red">0</font>>]
+    1 -> 4 [label = <<font color="blue">20</font>/<font color="green">30</font>,<font color="red">0</font>>,color=blue,penwidth=1.0]
+    2 -> 3 [label = <<font color="blue">10</font>/<font color="green">10</font>,<font color="red">0</font>>,color=blue,penwidth=1.0]
+    2 -> 4 [label = <<font color="blue">20</font>/<font color="green">20</font>,<font color="red">0</font>>,color=blue,penwidth=1.0]
+    3 -> 2 [label = <<font color="blue">0</font>/<font color="green">5</font>,<font color="red">0</font>>]
+    3 -> 4 [label = <<font color="blue">20</font>/<font color="green">20</font>,<font color="red">0</font>>,color=blue,penwidth=1.0]
+    4 -> 0 [color=red]
+
+    0 [label="0",color=green]
+    1 [label="1"]
+    2 [label="2"]
+    3 [label="3"]
+    4 [label="4",color=blue]
+}

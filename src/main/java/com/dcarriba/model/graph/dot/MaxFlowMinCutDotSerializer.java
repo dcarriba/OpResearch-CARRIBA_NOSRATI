@@ -48,7 +48,11 @@ public class MaxFlowMinCutDotSerializer extends DotSerializer<MaxFlowMinCut> {
                     .append("</font>>");
 
             if (maxFlowMinCut.getMinimumCutArcs().contains(arc)) {
-                dot.append(",color=blue,penwidth=2.0");
+                dot.append(",color=orange,penwidth=2.0");
+            } else {
+                if (maxFlowMinCut.getFlow(arc) > 0) {
+                    dot.append(",color=blue,penwidth=1.0");
+                }
             }
 
             dot.append("]\n");
@@ -78,10 +82,8 @@ public class MaxFlowMinCutDotSerializer extends DotSerializer<MaxFlowMinCut> {
                     .append(super.escapeForDot(vertex.getLabel()))
                     .append("\"");
 
-            if (maxFlowMinCut.getMinimumCutSourceSide().contains(vertex)) {
-                dot.append(",style=filled,fillcolor=palegreen");
-            } else if (maxFlowMinCut.getMinimumCutSinkSide().contains(vertex)) {
-                dot.append(",style=filled,fillcolor=lightblue");
+            if (isIncidentToMinimumCutArc(vertex, maxFlowMinCut)) {
+                dot.append(",style=filled,fillcolor=orange");
             }
 
             dot.append("]\n");
@@ -126,6 +128,11 @@ public class MaxFlowMinCutDotSerializer extends DotSerializer<MaxFlowMinCut> {
                 .sorted(Comparator.comparingInt((Vertex vertex) -> maxFlowMinCutVertexRank(vertex, source, sink))
                         .thenComparingInt(Vertex::getId))
                 .toList();
+    }
+
+    private boolean isIncidentToMinimumCutArc(Vertex vertex, MaxFlowMinCut maxFlowMinCut) {
+        return maxFlowMinCut.getMinimumCutArcs().stream()
+                .anyMatch(arc -> arc.getFrom().equals(vertex) || arc.getTo().equals(vertex));
     }
 
     private int maxFlowMinCutVertexRank(Vertex vertex, Vertex source, Vertex sink) {

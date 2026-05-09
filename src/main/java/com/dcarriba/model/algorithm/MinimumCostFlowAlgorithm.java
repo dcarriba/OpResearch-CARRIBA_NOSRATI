@@ -24,20 +24,53 @@ public class MinimumCostFlowAlgorithm {
         return solveWithPathAlgorithm(graph, Long.MAX_VALUE);
     }
 
+    public MinimumCostFlow solveWithPathAlgorithm(Graph graph, ResidualGraphObserver residualGraphObserver) {
+        return solveWithPathAlgorithm(graph, Long.MAX_VALUE, residualGraphObserver);
+    }
+
     public MinimumCostFlow solveWithPathAlgorithm(Graph graph, long requestedFlow) {
-        return solve(graph, requestedFlow, PathStrategy.BELLMAN_FORD);
+        return solveWithPathAlgorithm(graph, requestedFlow, ResidualGraphObserver.NONE);
+    }
+
+    public MinimumCostFlow solveWithPathAlgorithm(
+        Graph graph,
+        long requestedFlow,
+        ResidualGraphObserver residualGraphObserver
+    ) {
+        return solve(graph, requestedFlow, PathStrategy.BELLMAN_FORD, residualGraphObserver);
     }
 
     public MinimumCostFlow solveWithDijkstraAndCostNormalization(Graph graph) {
         return solveWithDijkstraAndCostNormalization(graph, Long.MAX_VALUE);
     }
 
-    public MinimumCostFlow solveWithDijkstraAndCostNormalization(Graph graph, long requestedFlow) {
-        return solve(graph, requestedFlow, PathStrategy.DIJKSTRA_WITH_POTENTIALS);
+    public MinimumCostFlow solveWithDijkstraAndCostNormalization(
+        Graph graph,
+        ResidualGraphObserver residualGraphObserver
+    ) {
+        return solveWithDijkstraAndCostNormalization(graph, Long.MAX_VALUE, residualGraphObserver);
     }
 
-    private MinimumCostFlow solve(Graph graph, long requestedFlow, PathStrategy pathStrategy) {
+    public MinimumCostFlow solveWithDijkstraAndCostNormalization(Graph graph, long requestedFlow) {
+        return solveWithDijkstraAndCostNormalization(graph, requestedFlow, ResidualGraphObserver.NONE);
+    }
+
+    public MinimumCostFlow solveWithDijkstraAndCostNormalization(
+        Graph graph,
+        long requestedFlow,
+        ResidualGraphObserver residualGraphObserver
+    ) {
+        return solve(graph, requestedFlow, PathStrategy.DIJKSTRA_WITH_POTENTIALS, residualGraphObserver);
+    }
+
+    private MinimumCostFlow solve(
+        Graph graph,
+        long requestedFlow,
+        PathStrategy pathStrategy,
+        ResidualGraphObserver residualGraphObserver
+    ) {
         Objects.requireNonNull(graph, "graph must not be null");
+        Objects.requireNonNull(residualGraphObserver, "residualGraphObserver must not be null");
         if (requestedFlow < 0) {
             throw new IllegalArgumentException("Requested flow must be >= 0.");
         }
@@ -56,6 +89,8 @@ public class MinimumCostFlowAlgorithm {
 
         long sentFlow = 0;
         long minimumCost = 0;
+        int step = 0;
+        residualGraphObserver.onResidualGraphStep(pathStrategy.algorithmName(), step, residualGraph);
 
         while (sentFlow < requestedFlow) {
             List<ResidualArc> path = switch (pathStrategy) {
@@ -99,6 +134,8 @@ public class MinimumCostFlowAlgorithm {
             }
 
             sentFlow += bottleneck;
+            step++;
+            residualGraphObserver.onResidualGraphStep(pathStrategy.algorithmName(), step, residualGraph);
         }
 
         return new MinimumCostFlow(source, sink, sentFlow, minimumCost, flows);
@@ -126,7 +163,49 @@ public class MinimumCostFlowAlgorithm {
     }
 
     private Map<Vertex, Long> initialPotentials(Graph graph, ResidualGraph residualGraph, Vertex source) {
-        return new HashMap<>(bellmanFord(graph, residualGraph, source, true).distances());
+        Map<Vertex, Long> distances = bellmanFord(graph, residualGraph, source, true).distances();
+        Map<Vertex, Long> potentials = new HashMap<>();
+        for (Vertex v : graph.getVertices()) {
+            potentials.put(v, distances.getOrDefault(v, INFINITY));
+        }
+        return potentials;
+    }
+
+    private Map<Vertex, Long> recomputePotentialsFromResidual(ResidualGraph residualGraph, Vertex source) {
+        Map<Vertex, Long> distances = new HashMap<>();
+        distances.put(source, 0L);
+
+        int n = residualGraph.getVertices().size();
+        for (int i = 1; i < n; i++) {
+            boolean changed = false;
+            for (Vertex u : residualGraph.getVertices()) {
+                Long du = distances.get(u);
+                if (du == null) {
+                    continue;
+                }
+
+                for (ResidualArc arc : residualGraph.getArcsFrom(u)) {
+                    if (arc.getResidualCapacity() <= 0) {
+                        continue;
+                    }
+
+                    long cand = du + arc.getCost();
+                    if (cand < distances.getOrDefault(arc.getTo(), INFINITY)) {
+                        distances.put(arc.getTo(), cand);
+                        changed = true;
+                    }
+                }
+            }
+            if (!changed) {
+                break;
+            }
+        }
+
+        Map<Vertex, Long> potentials = new HashMap<>();
+        for (Vertex v : residualGraph.getVertices()) {
+            potentials.put(v, distances.getOrDefault(v, INFINITY));
+        }
+        return potentials;
     }
 
     private ShortestPathTree bellmanFord(
@@ -224,11 +303,15 @@ public class MinimumCostFlowAlgorithm {
                     continue;
                 }
 
-                long reducedCost = arc.getCost()
-                    + potentials.getOrDefault(arc.getFrom(), 0L)
-                    - potentials.getOrDefault(arc.getTo(), 0L);
+                long potFrom = potentials.getOrDefault(arc.getFrom(), INFINITY);
+                long potTo = potentials.getOrDefault(arc.getTo(), INFINITY);
+                long reducedCost = arc.getCost() + potFrom - potTo;
                 if (reducedCost < 0) {
-                    throw new IllegalStateException("Reduced cost must be non-negative.");
+                    String msg = String.format(
+                        "Reduced cost must be non-negative. arc=%d->%d cost=%d potFrom=%d potTo=%d reduced=%d",
+                        arc.getFrom().getId(), arc.getTo().getId(), arc.getCost(), potFrom, potTo, reducedCost
+                    );
+                    throw new IllegalStateException(msg);
                 }
 
                 long candidate = current.distance() + reducedCost;
@@ -242,6 +325,29 @@ public class MinimumCostFlowAlgorithm {
 
         for (Map.Entry<Vertex, Long> entry : distances.entrySet()) {
             potentials.merge(entry.getKey(), entry.getValue(), Long::sum);
+        }
+
+        // Invariant check: all residual arcs must have non-negative reduced cost.
+        boolean invariantOk = true;
+        for (ResidualArc arc : residualGraph.getArcs()) {
+            if (arc.getResidualCapacity() <= 0) {
+                continue;
+            }
+            long potFrom = potentials.getOrDefault(arc.getFrom(), INFINITY);
+            long potTo = potentials.getOrDefault(arc.getTo(), INFINITY);
+            long reduced = arc.getCost() + potFrom - potTo;
+            if (reduced < 0) {
+                invariantOk = false;
+                break;
+            }
+        }
+
+        if (!invariantOk) {
+            // Fallback: recompute potentials using Bellman-Ford on the residual graph
+            Map<Vertex, Long> recomputed = recomputePotentialsFromResidual(residualGraph, source);
+            for (Vertex v : recomputed.keySet()) {
+                potentials.put(v, recomputed.getOrDefault(v, INFINITY));
+            }
         }
 
         if (!parents.containsKey(sink)) {
@@ -269,8 +375,18 @@ public class MinimumCostFlowAlgorithm {
     }
 
     private enum PathStrategy {
-        BELLMAN_FORD,
-        DIJKSTRA_WITH_POTENTIALS
+        BELLMAN_FORD("minimumCostFlowPathAlgorithm"),
+        DIJKSTRA_WITH_POTENTIALS("minimumCostFlowDijkstraAndCostNormalization");
+
+        private final String algorithmName;
+
+        PathStrategy(String algorithmName) {
+            this.algorithmName = algorithmName;
+        }
+
+        private String algorithmName() {
+            return algorithmName;
+        }
     }
 
     private record ShortestPathTree(Map<Vertex, Long> distances, Map<Vertex, ResidualArc> parents) {

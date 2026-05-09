@@ -39,21 +39,39 @@ class MaxFlowMinCutDotSerializerTest {
                     label="maximum flow = 5, minimum cut = 5"
                     labelloc=t
 
-                    0 -> 1 [label = <<font color="blue">3</font>/<font color="green">3</font>>,color=blue,penwidth=2.0]
-                    0 -> 2 [label = <<font color="blue">2</font>/<font color="green">2</font>>,color=blue,penwidth=2.0]
-                    1 -> 2 [label = <<font color="blue">1</font>/<font color="green">1</font>>]
-                    1 -> 3 [label = <<font color="blue">2</font>/<font color="green">2</font>>]
-                    2 -> 3 [label = <<font color="blue">3</font>/<font color="green">4</font>>]
+                    0 -> 1 [label = <<font color="blue">3</font>/<font color="green">3</font>>,color=orange,penwidth=2.0]
+                    0 -> 2 [label = <<font color="blue">2</font>/<font color="green">2</font>>,color=orange,penwidth=2.0]
+                    1 -> 2 [label = <<font color="blue">1</font>/<font color="green">1</font>>,color=blue,penwidth=1.0]
+                    1 -> 3 [label = <<font color="blue">2</font>/<font color="green">2</font>>,color=blue,penwidth=1.0]
+                    2 -> 3 [label = <<font color="blue">3</font>/<font color="green">4</font>>,color=blue,penwidth=1.0]
                     3 -> 0 [color=red]
 
                     0 [label="0",color=green]
-                    1 [label="1",style=filled,fillcolor=lightblue]
-                    2 [label="2",style=filled,fillcolor=lightblue]
+                    1 [label="1",style=filled,fillcolor=orange]
+                    2 [label="2",style=filled,fillcolor=orange]
                     3 [label="3",color=blue]
                 }
                 """;
 
         assertEquals(expected, dot);
+    }
+
+    @Test
+    void shouldOnlyColorVerticesIncidentToMinimumCutArcs() {
+        String input = """
+                4 3 0 3
+                0 1 10 0
+                1 2 10 0
+                2 3 5 0
+                """;
+
+        Graph graph = new GraphInputParser().parse(input);
+        MaxFlowMinCut maxFlowMinCut = new FordFulkerson().solve(graph);
+
+        String dot = new MaxFlowMinCutDotSerializer().serialize(maxFlowMinCut);
+
+        assertEquals(true, dot.contains("1 [label=\"1\"]"));
+        assertEquals(true, dot.contains("2 [label=\"2\",style=filled,fillcolor=orange]"));
     }
 
     @Test

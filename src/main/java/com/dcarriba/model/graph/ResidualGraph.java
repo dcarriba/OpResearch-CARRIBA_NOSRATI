@@ -1,5 +1,7 @@
 package com.dcarriba.model.graph;
 
+import com.dcarriba.model.graph.dot.DotSerializable;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,10 +13,15 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-public class ResidualGraph {
+public class ResidualGraph implements DotSerializable {
     private final Map<Vertex, List<ResidualArc>> adjacencyList = new LinkedHashMap<>();
+    private final Vertex source;
+    private final Vertex sink;
 
     public ResidualGraph(Graph graph) {
+        source = graph.getSource();
+        sink = graph.getSink();
+
         for (Vertex vertex : graph.getVertices()) {
             adjacencyList.put(vertex, new ArrayList<>());
         }
@@ -39,6 +46,24 @@ public class ResidualGraph {
 
     public List<ResidualArc> getArcsFrom(Vertex vertex) {
         return Collections.unmodifiableList(adjacencyList.getOrDefault(vertex, List.of()));
+    }
+
+    public Set<Vertex> getVertices() {
+        return Collections.unmodifiableSet(adjacencyList.keySet());
+    }
+
+    public List<ResidualArc> getArcs() {
+        return adjacencyList.values().stream()
+            .flatMap(List::stream)
+            .toList();
+    }
+
+    public Vertex getSource() {
+        return source;
+    }
+
+    public Vertex getSink() {
+        return sink;
     }
 
     /*

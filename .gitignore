@@ -42,6 +42,19 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-### DOT and PDF files ###
-*.dot
-*.dot.pdf
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.brf
+*.nav
+*.snm
+*.vrb

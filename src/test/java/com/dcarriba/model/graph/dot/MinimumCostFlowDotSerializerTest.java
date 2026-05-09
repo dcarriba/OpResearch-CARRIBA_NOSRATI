@@ -39,11 +39,11 @@ class MinimumCostFlowDotSerializerTest {
                     label="flow = 3, minimum cost = 10"
                     labelloc=t
 
-                    0 -> 1 [label = <<font color="blue">2</font>/<font color="green">2</font>,<font color="red">2</font>>,color=blue,penwidth=2.0]
-                    0 -> 2 [label = <<font color="blue">1</font>/<font color="green">2</font>,<font color="red">4</font>>,color=blue,penwidth=2.0]
-                    1 -> 2 [label = <<font color="blue">1</font>/<font color="green">1</font>,<font color="red">-3</font>>,color=blue,penwidth=2.0]
-                    1 -> 3 [label = <<font color="blue">1</font>/<font color="green">1</font>,<font color="red">3</font>>,color=blue,penwidth=2.0]
-                    2 -> 3 [label = <<font color="blue">2</font>/<font color="green">2</font>,<font color="red">1</font>>,color=blue,penwidth=2.0]
+                    0 -> 1 [label = <<font color="blue">2</font>/<font color="green">2</font>,<font color="red">2</font>>,color=blue,penwidth=1.0]
+                    0 -> 2 [label = <<font color="blue">1</font>/<font color="green">2</font>,<font color="red">4</font>>,color=blue,penwidth=1.0]
+                    1 -> 2 [label = <<font color="blue">1</font>/<font color="green">1</font>,<font color="red">-3</font>>,color=blue,penwidth=1.0]
+                    1 -> 3 [label = <<font color="blue">1</font>/<font color="green">1</font>,<font color="red">3</font>>,color=blue,penwidth=1.0]
+                    2 -> 3 [label = <<font color="blue">2</font>/<font color="green">2</font>,<font color="red">1</font>>,color=blue,penwidth=1.0]
                     3 -> 0 [color=red]
 
                     0 [label="0",color=green]

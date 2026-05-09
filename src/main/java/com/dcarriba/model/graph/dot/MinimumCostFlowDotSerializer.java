@@ -55,7 +55,7 @@ public class MinimumCostFlowDotSerializer extends DotSerializer<MinimumCostFlow>
                 .append("</font>>");
 
             if (flow > 0) {
-                dot.append(",color=blue,penwidth=2.0");
+                dot.append(",color=blue,penwidth=1.0");
             }
 
             dot.append("]\n");

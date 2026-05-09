@@ -1,5 +1,7 @@
 package com.dcarriba.model.utilities;
 
+import com.dcarriba.main.Config;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -34,5 +36,21 @@ public class Utilities {
         }
 
         return pdfPath;
+    }
+
+    public static Path outputDirectoryFor(Path inputPath) {
+        String inputFileName = inputPath.getFileName().toString();
+        String inputName = removeExtension(inputFileName);
+
+        return Config.OUTPUT_ROOT.resolve(inputName);
+    }
+
+    private static String removeExtension(String fileName) {
+        int extensionStart = fileName.lastIndexOf('.');
+        if (extensionStart <= 0) {
+            return fileName;
+        }
+
+        return fileName.substring(0, extensionStart);
     }
 }
